@@ -7,5 +7,9 @@
   "description": "Template library",
   "releasenote": "initial release",
   "version": "0.1.0",
-  "contributors": ["fponticelli"]
+  "contributors": ["fponticelli"],
+  "dependecies" : {
+    "thx.core" : "0.5.2",
+    "hscript" : "2.0.1"
+  }
 }
