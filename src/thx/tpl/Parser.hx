@@ -3,6 +3,11 @@ package thx.tpl;
 import thx.tpl.ParserError;
 
 class Parser {
+  static inline var BRACKET_PRINT_OPEN = '{';
+  static inline var BRACKET_PRINT_CLOSE = '}';
+  static inline var BRACKET_CODE_OPEN = '(';
+  static inline var BRACKET_CODE_CLOSE = ')';
+
   static var bracketMismatch = "Bracket mismatch! Inside template, non-paired brackets, '{' or '}', should be replaced by ${'{'} and ${'}'}.";
 
   var condMatch : EReg;
@@ -190,11 +195,11 @@ class Parser {
 
     // Test for code or print block ${ or $(
     var startBrace = peek(template, 1),
-        endBrace = (startBrace == '{') ? '}' : ')',
+        endBrace = (startBrace == BRACKET_CODE_OPEN) ? BRACKET_CODE_CLOSE : BRACKET_PRINT_CLOSE,
         str = parseScriptPart(template.substr(1), startBrace, endBrace),
         noBraces = StringTools.trim(str.substr(1, str.length - 2));
 
-    if(startBrace == '{')
+    if(startBrace == BRACKET_CODE_OPEN)
       return { block: TBlock.codeBlock(noBraces), length: str.length + 1, start:this.pos };
     else // (
       return { block: TBlock.printBlock(noBraces), length: str.length + 1, start:this.pos };

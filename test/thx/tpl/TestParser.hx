@@ -49,19 +49,23 @@ class TestParser {
 
     // String substitution
     output = parser.parse("Hello$(name)abc");
+    Assert.same([literal("Hello"), codeBlock("name"), literal("abc")], output);
+
+    // String substitution
+    output = parser.parse("Hello${name}abc");
     Assert.same([literal("Hello"), printBlock("name"), literal("abc")], output);
 
-    output = parser.parse("Hello $(\"Boris\")");
+    output = parser.parse("Hello ${\"Boris\"}");
     Assert.same([literal("Hello "), printBlock('"Boris"')], output);
 
     // String substitution with escaped quotation marks
-    output = parser.parse('Hello $'+'(a + "A \\" string.")');
+    output = parser.parse('Hello $'+'{a + "A \\" string."}');
     Assert.same([literal("Hello "), printBlock('a + "A \\" string."')], output);
 
-    output = parser.parse("Hello $(a + 'A \\' string.')");
+    output = parser.parse("Hello ${a + 'A \\' string.'}");
     Assert.same([literal("Hello "), printBlock("a + 'A \\' string.'")], output);
 
-    output = parser.parse("$(\"'Mixing'\")");
+    output = parser.parse("${\"'Mixing'\"}");
     Assert.same([printBlock("\"'Mixing'\"")], output);
 
     // Braces around var
@@ -69,26 +73,32 @@ class TestParser {
     Assert.same([literal("Hello {"), printBlock("name"), literal("}")], output);
 
     // Concatenated vars with space between start/end of block
-    output = parser.parse("$( user.firstname + \" \" + user.lastname )");
+    output = parser.parse("${ user.firstname + \" \" + user.lastname }");
     Assert.same([printBlock("user.firstname + \" \" + user.lastname")], output);
   }
 
   public function test_If_codeblocks_are_parsed_correctly() {
     // Single codeblock
-    var output = parser.parse("Test: ${a = 0; Lib.print(\"Evil Bracke}\"); }");
+    var output = parser.parse("Test: $(a = 0; Lib.print(\"Evil Bracke}\"); )");
     Assert.same([
       literal("Test: "),
       codeBlock("a = 0; Lib.print(\"Evil Bracke}\");")
     ], output);
 
+    var output = parser.parse("Test: $(a = 0; Lib.print(\"Evil Bracke)\"); )");
+    Assert.same([
+      literal("Test: "),
+      codeBlock("a = 0; Lib.print(\"Evil Bracke)\");")
+    ], output);
+
     // Nested codeblock
-    var output = parser.parse("${ a = 0; if(b == 2) { Lib.print(\"Ok\"); }}");
+    var output = parser.parse("$( a = 0; if(b == 2) { Lib.print(\"Ok\"); })");
     Assert.same([
       codeBlock("a = 0; if(b == 2) { Lib.print(\"Ok\"); }")
     ], output);
 
     // $ in codeblock
-    var output = parser.parse("${ a = 0; if(b == 2) { Lib.print(\"a$b\"); }}");
+    var output = parser.parse("$( a = 0; if(b == 2) { Lib.print(\"a$b\"); })");
     Assert.same([
       codeBlock("a = 0; if(b == 2) { Lib.print(\"a$b\"); }")
     ], output);
@@ -186,7 +196,7 @@ class TestParser {
     ], output);
 
     // while
-    output = parser.parse("$while( a > 0 ) { ${a--;} }");
+    output = parser.parse("$while( a > 0 ) { $(a--;) }");
     Assert.same([
       codeBlock("while( a > 0 ) {"),
       literal(" "),
