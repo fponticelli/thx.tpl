@@ -1,4 +1,5 @@
 # TODO
 
- * change escape sequence from $$ to \\$
- * improve error message and error position
+    * refactor Template: pass interpreter and replace Output
+    * change escape sequence from $$ to \\$
+    * improve error message and error position
