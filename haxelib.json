@@ -1,0 +1,11 @@
+{
+  "name": "thx.tpl",
+  "url": "https://github.com/fponticelli/thx.tpl",
+  "license": "MIT",
+  "classPath": "src",
+  "tags": ["thx", "template", "cross"],
+  "description": "Template library",
+  "releasenote": "initial release",
+  "version": "0.1.0",
+  "contributors": ["fponticelli"]
+}
