@@ -7,11 +7,12 @@ package thx.tpl;
 
 import haxe.PosInfos;
 import thx.core.Error;
+import haxe.CallStack;
 
 class ParserError extends Error {
   public var excerpt(default, null) : String;
 
-  public function new(message : String, ?excerpt : String, ?stack : haxe.CallStack, ?pos : PosInfos) {
+  public function new(message : String, ?excerpt : String, ?stack : Array<StackItem>, ?pos : PosInfos) {
     super(message, stack, pos);
     this.excerpt = excerpt;
   }

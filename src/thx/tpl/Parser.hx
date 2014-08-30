@@ -21,6 +21,8 @@ class Parser {
 
   var pos : Int;
 
+  var fileName : String;
+
   // Constructor must be put at end of class to prevent intellisense problems with regexps
   public function new() {
     // Some are quite simple, could be made with string functions instead for speed
@@ -54,7 +56,7 @@ class Parser {
           if(stack == 0)
             return template.substr(0, i+1);
           if (stack < 0)
-            throw new ParserError( 'Unbalanced braces for block: ', pos,  template.substr(0, 100) );
+            error('Unbalanced braces for block: ', template.substr(0, 100));
         } else if (char == '"') {
           insideDoubleQuote = true;
         } else if (char == "'") {
@@ -67,8 +69,22 @@ class Parser {
       }
     }
 
-    //trace(startBrace); trace(endBrace);
-    throw new ParserError( 'Failed to find a closing delimiter for the script block: ', this.pos, template.substr(0, 100) );
+    return error('Failed to find a closing delimiter for the script block', template.substr(0, 100));
+  }
+
+  inline function error(message : String, ?excerpt : String) {
+    var p = getPos();
+    return throw new ParserError(message, excerpt, p);
+  }
+
+  function getPos() : haxe.PosInfos {
+    return {
+      methodName : null,
+      lineNumber : pos, // TODO
+      fileName : fileName,
+      customParams : [],
+      className : null
+    };
   }
 
   function parseContext(template : String) : ParseContext {
@@ -176,7 +192,8 @@ class Parser {
       if (switch (bracketStack.pop()) {
         case code: --conditionalStack < 0;
         default: true;
-      }) throw new ParserError( bracketMismatch, this.pos );
+      })
+        error(bracketMismatch);
 
       return { block: TBlock.codeBlock('}'), length: 1, start:this.pos };
     }
@@ -205,7 +222,7 @@ class Parser {
       return { block: TBlock.printBlock(noBraces), length: str.length + 1, start:this.pos };
   }
 
-  private function parseString(str : String, modifier : String -> ParseResult, throwAtEnd : Bool) : String {
+  function parseString(str : String, modifier : String -> ParseResult, throwAtEnd : Bool) : String {
     var insideSingleQuote = false,
         insideDoubleQuote = false,
         i = -1;
@@ -237,7 +254,7 @@ class Parser {
     }
 
     if(throwAtEnd)
-      throw new ParserError( 'Failed to find a closing delimiter: ', this.pos, str.substr(0, 100) );
+      error('Failed to find a closing delimiter', str.substr(0, 100));
 
     return str;
   }
@@ -272,7 +289,7 @@ class Parser {
                 bracketStack.pop();
             }
           } else {
-             throw new ParserError( bracketMismatch, this.pos );
+             error(bracketMismatch);
           }
         case '{':
           bracketStack.push(literal);
@@ -292,7 +309,8 @@ class Parser {
   /**
    * Takes a template string as input and returns an AST made of TBlock instances.
    */
-  public function parse(template : String) : Array<TBlock> {
+  public function parse(template : String, ?fileName : String) : Array<TBlock> {
+    this.fileName = null == fileName ? 'untitled' : fileName;
     this.pos = 0;
 
     var output = new Array<TBlock>();
@@ -310,7 +328,7 @@ class Parser {
       this.pos += block.length;
     }
 
-    if (bracketStack.length != 0) throw new ParserError( bracketMismatch, this.pos );
+    if (bracketStack.length != 0) error(bracketMismatch);
 
     return output;
   }
@@ -333,7 +351,7 @@ class Parser {
       this.pos += block.length;
     }
 
-    if (bracketStack.length != 0) throw new ParserError( bracketMismatch, this.pos );
+    if (bracketStack.length != 0) error(bracketMismatch);
 
     return output;
   }
