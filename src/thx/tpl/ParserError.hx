@@ -5,15 +5,14 @@
 
 package thx.tpl;
 
-class ParserError extends thx.core.Error {
-  public var msg(default, null):String;
-  public var line(default, null):Int;
-  public var excerpt(default, null):String;
+import haxe.PosInfos;
+import thx.core.Error;
 
-  public function new(msg, line, ?excerpt) {
-    super(null);
-    this.msg = msg;
-    this.line = line;
+class ParserError extends Error {
+  public var excerpt(default, null) : String;
+
+  public function new(message : String, ?excerpt : String, ?stack : haxe.CallStack, ?pos : PosInfos) {
+    super(message, stack, pos);
     this.excerpt = excerpt;
   }
 
@@ -21,9 +20,12 @@ class ParserError extends thx.core.Error {
     var excerpt = this.excerpt;
     if (excerpt != null) {
       var nl = excerpt.indexOf("\n");
-      if (nl != -1)
+      if (nl > 0)
         excerpt = excerpt.substr(0, nl);
+      excerpt = '\nat:\n$excerpt';
+    } else {
+      excerpt = '';
     }
-    return msg + " @ " + line + (excerpt != null ? (" ( \"" + excerpt + "\" )") : "");
+    return super.toString() + excerpt;
   }
 }
