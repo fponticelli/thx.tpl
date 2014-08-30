@@ -2,45 +2,19 @@ package thx.tpl;
 
 import thx.tpl.ParserError;
 
-enum TBlock {
-  // Pure text
-  literal(s : String);
-  // Code
-  codeBlock(s : String);
-  // Code that should be printed immediately
-  printBlock(s : String);
-}
-
-private typedef Block = {
-  var block : TBlock;
-  var start : Int;
-  var length : Int;
-}
-
-private enum ParseContext {
-  literal;
-  code;
-}
-
-private enum ParseResult {
-  keepGoing;
-  doneIncludeCurrent;
-  doneSkipCurrent;
-}
-
 class Parser {
-  private static var bracketMismatch = "Bracket mismatch! Inside template, non-paired brackets, '{' or '}', should be replaced by ${'{'} and ${'}'}.";
+  static var bracketMismatch = "Bracket mismatch! Inside template, non-paired brackets, '{' or '}', should be replaced by ${'{'} and ${'}'}.";
 
-  private var condMatch : EReg;
-  private var inConditionalMatch : EReg;
-  private var variableChar : EReg;
+  var condMatch : EReg;
+  var inConditionalMatch : EReg;
+  var variableChar : EReg;
 
   // State variables for the parser
-  private var context : ParseContext;
-  private var bracketStack : Array<ParseContext>;
-  private var conditionalStack : Int;
+  var context : ParseContext;
+  var bracketStack : Array<ParseContext>;
+  var conditionalStack : Int;
 
-  private var pos : Int;
+  var pos : Int;
 
   // Constructor must be put at end of class to prevent intellisense problems with regexps
   public function new() {
@@ -358,4 +332,30 @@ class Parser {
 
     return output;
   }
+}
+
+enum TBlock {
+  // Pure text
+  literal(s : String);
+  // Code
+  codeBlock(s : String);
+  // Code that should be printed immediately
+  printBlock(s : String);
+}
+
+private typedef Block = {
+  var block : TBlock;
+  var start : Int;
+  var length : Int;
+}
+
+private enum ParseContext {
+  literal;
+  code;
+}
+
+private enum ParseResult {
+  keepGoing;
+  doneIncludeCurrent;
+  doneSkipCurrent;
 }
