@@ -3,7 +3,7 @@ package thx.tpl;
 import hscript.Interp;
 import thx.tpl.hscript.EnhancedInterp;
 import Map;
-using thx.core.Maps;
+using thx.Maps;
 
 class Template {
   private var template : String;

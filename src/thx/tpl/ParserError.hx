@@ -6,7 +6,7 @@
 package thx.tpl;
 
 import haxe.PosInfos;
-import thx.core.Error;
+import thx.Error;
 import haxe.CallStack;
 
 class ParserError extends Error {

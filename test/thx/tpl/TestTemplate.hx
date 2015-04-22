@@ -3,7 +3,7 @@ package thx.tpl;
 import utest.Assert;
 import thx.tpl.Output;
 using thx.tpl.Output;
-import thx.core.AnonymousMap;
+import thx.AnonymousMap;
 
 class TestTemplate {
   var template : Template;
