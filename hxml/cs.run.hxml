@@ -1,0 +1,11 @@
+-cp src
+-cp test
+-lib hscript
+-lib utest
+-lib thx.core
+-lib hxcs
+-cs bin/cs
+-main TestAll
+-D thx-format
+
+-cmd mono bin/cs/bin/TestAll.exe
