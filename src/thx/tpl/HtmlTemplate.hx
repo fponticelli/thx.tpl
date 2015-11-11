@@ -4,7 +4,7 @@ import thx.tpl.Output;
 class HtmlTemplate extends Template {
   public function new(template : String) {
     super(template);
-    super.addHelper("raw", raw);
+    addHelper("raw", raw);
   }
 
   override public function escape(str : String) : String
