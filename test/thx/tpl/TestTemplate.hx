@@ -3,7 +3,6 @@ package thx.tpl;
 import utest.Assert;
 import thx.tpl.Output;
 using thx.tpl.Output;
-import thx.AnonymousMap;
 
 class TestTemplate {
   var template : Template;
@@ -12,7 +11,7 @@ class TestTemplate {
 
   public function test_If_basic_vars_are_parsed_correctly() {
     template = new Template("Hello $name");
-    Assert.equals('Hello Boris', template.execute( new AnonymousMap({ name: 'Boris' }) ));
+    Assert.equals('Hello Boris', template.execute(["name" => 'Boris']));
   }
 
   public function test_If_basic_vars_are_parsed_correctly_with_hash() {
@@ -25,17 +24,17 @@ class TestTemplate {
 
   public function test_If_basic_vars_are_parsed_correctly_with_whitespace() {
     template = new Template("  Hello $name  \n ");
-    Assert.equals("  Hello Boris  \n ", template.execute( new AnonymousMap({ name: 'Boris' }) ));
+    Assert.equals("  Hello Boris  \n ", template.execute(["name" => 'Boris']));
   }
 
   public function test_If_keyword_vars_are_parsed_correctly() {
     template = new Template("$for(i in numbers){${i}-}");
-    Assert.equals("1-2-3-4-5-", template.execute( new AnonymousMap({ numbers: [1, 2, 3, 4, 5] }) ));
+    Assert.equals("1-2-3-4-5-", template.execute(["numbers" => [1, 2, 3, 4, 5]]));
 
     template = new Template("$for(u in users){$if(u.name == 'Boris'){<b>$u.name</b>}else if(u.name == 'Doris'){<i>$u.name</i>}else{$u.name}<br>}");
-    Assert.equals("<b>Boris</b><br><i>Doris</i><br>Someone else<br>", template.execute(new AnonymousMap({
-        users: [{name: 'Boris'}, {name: 'Doris'}, {name: 'Someone else'}]
-      })));
+    Assert.equals("<b>Boris</b><br><i>Doris</i><br>Someone else<br>", template.execute([
+        "users" => [{name: 'Boris'}, {name: 'Doris'}, {name: 'Someone else'}]
+      ]));
 
     template = new Template("$( a = 10; )$while(--a > 0){$a}");
     Assert.equals("987654321", template.execute(new Map<String, Dynamic>()));
@@ -46,29 +45,29 @@ class TestTemplate {
 
   public function test_If_HtmlTemplate_strings_are_escaped() {
     template = new HtmlTemplate("$text");
-    Assert.equals("&lt; &gt; &amp; &quot; &#039;", template.execute( new AnonymousMap({ text: "< > & \" '" }) ));
+    Assert.equals("&lt; &gt; &amp; &quot; &#039;", template.execute(["text" => "< > & \" '"]));
 
     template = new HtmlTemplate("$for(u in users){<div>$u</div>}");
-    Assert.equals("<div>admin</div><div>&lt;script&gt;</div>", template.execute( new AnonymousMap({ users: ["admin","<script>",] }) ));
+    Assert.equals("<div>admin</div><div>&lt;script&gt;</div>", template.execute(["users" => ["admin","<script>"]]));
   }
 
   public function test_If_HtmlTemplate_raw_works() {
     template = new HtmlTemplate("$raw(text)");
-    Assert.equals("< > & \" '", template.execute( new AnonymousMap({ text: "< > & \" '" }) ));
+    Assert.equals("< > & \" '", template.execute( new AnonymousMap({ "text": "< > & \" '" }) ));
 
     template = new HtmlTemplate("$for(u in users){<div>$raw(u)</div>}");
-    Assert.equals("<div>admin</div><div><script></div>", template.execute( new AnonymousMap({ users: ["admin", "<script>", ] }) ));
+    Assert.equals("<div>admin</div><div><script></div>", template.execute(["users" => ["admin", "<script>"]]));
 
     template = new HtmlTemplate("$raw(text)");
-    Assert.equals("&lt; &gt; &amp; &quot; &#039;", template.execute( new AnonymousMap({ text: new UnsafeString("< > & \" '") }) ));
+    Assert.equals("&lt; &gt; &amp; &quot; &#039;", template.execute(["text" => new UnsafeString("< > & \" '")]));
   }
 
   public function test_If_HtmlTemplate_SafeString_works() {
     template = new HtmlTemplate("$text");
-    Assert.equals("< > & \" '", template.execute( new AnonymousMap({ text: new SafeString("< > & \" '") }) ));
+    Assert.equals("< > & \" '", template.execute(["text" => new SafeString("< > & \" '")]));
 
     template = new HtmlTemplate("$for(u in users){<div>$u</div>}");
-    Assert.equals("<div>admin</div><div><script></div>", template.execute( new AnonymousMap({ users: ["admin".safe(), "<script>".safe()] }) ));
+    Assert.equals("<div>admin</div><div><script></div>", template.execute(["users" => ["admin".safe(), "<script>".safe()]]));
   }
 
   /*

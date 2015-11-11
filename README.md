@@ -10,7 +10,7 @@ A template interpolates variables and control structures expressed as markup ins
 
 ```haxe
 var template = new Template("Hello $name");
-trace(template.execute(new AnonymousMap({ name: 'Boris' })));
+trace(template.execute(['name' => 'Boris']));
 // "Hello Boris"
 ```
 
