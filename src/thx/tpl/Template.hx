@@ -4,15 +4,22 @@ import hscript.Interp;
 import thx.tpl.hscript.EnhancedInterp;
 import Map;
 using thx.Maps;
+import thx.tpl.Parser;
 
 class Template {
-  private var template : String;
   public var variables(default, null) : Map<String, Dynamic>;
-  public var helpers : Map<String, Dynamic>;
+  var helpers(default, null) : Map<String, Dynamic>;
+  var program : hscript.Expr;
 
   public function new(template : String) {
-    this.template = template;
     this.helpers = new Map<String, Dynamic>();
+    // Parse the template into TBlocks for the HTemplateParser
+    var parsedBlocks = new Parser().parse(template);
+    // Make a hscript with the buffer as context.
+    var script = new ScriptBuilder('__b__').build(parsedBlocks);
+    // Make hscript parse and interpret the script.
+    var parser = new hscript.Parser();
+    program = parser.parseString(script);
   }
 
   public dynamic function escape(str : String) : String
@@ -22,23 +29,11 @@ class Template {
     helpers.set(name, helper);
 
   public function execute(content : IMap<String, Dynamic>) : String {
-    var buffer = new Output(escape);
-
-    // Parse the template into TBlocks for the HTemplateParser
-    var parsedBlocks = new Parser().parse(template);
-
-    // Make a hscript with the buffer as context.
-    var script = new ScriptBuilder('__b__').build(parsedBlocks);
-
-    // Make hscript parse and interpret the script.
-    var parser = new hscript.Parser();
-    var program = parser.parseString(script);
-
-    var interp = new EnhancedInterp();
+    var buffer = new Output(escape),
+        interp = new EnhancedInterp(),
+        bufferStack = [];
 
     variables = interp.variables;
-
-    var bufferStack = [];
 
     setInterpreterVars(interp, helpers);
     setInterpreterVars(interp, content);
