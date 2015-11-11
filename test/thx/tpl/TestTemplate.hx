@@ -53,7 +53,7 @@ class TestTemplate {
 
   public function test_If_HtmlTemplate_raw_works() {
     template = new HtmlTemplate("$raw(text)");
-    Assert.equals("< > & \" '", template.execute( new AnonymousMap({ "text": "< > & \" '" }) ));
+    Assert.equals("< > & \" '", template.execute(["text" => "< > & \" '"]));
 
     template = new HtmlTemplate("$for(u in users){<div>$raw(u)</div>}");
     Assert.equals("<div>admin</div><div><script></div>", template.execute(["users" => ["admin", "<script>"]]));
