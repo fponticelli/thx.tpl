@@ -97,6 +97,28 @@ template.addHelper(
 
 An instance of `HtmlTemplate` works almost exactly the same as an instance of `Template`. The only major difference is that values generated in `HtmlTemplate` are automatically sanitized to prevent `HTML` injection. If you still want to output the raw value you can use the helper function `raw` that is automatically available inside the template.
 
+## load templates at compile time
+
+If you have static files containing the template definitions, you can easily load them using `StaticResource` from [thx.core](https://github.com/fponticelli/thx.core)
+
+```haxe
+class Main {
+  public static function main() {
+    // `Resources.sample` matches a file like `test/templates/sample.html`
+    var template = new HtmlTemplate(Resources.sample);
+    var output = template.execute(["title" => "Page Title", "content" => "Page Content"]);
+    trace(output);
+  }
+}
+
+@:dir("test/templates") // this directory contains `sample.html`
+class Resources implements thx.StaticResource {}
+```
+
+Note that `StaticResource` will load any file in `test/templates` and assign its content to a member of `Resources`. The member name will match the file name minus the extension. The name is also transformed so that it remains compatible with allowed Haxe variable name identifiers. If your resource folder contains two file with names that are identical after normalization, an error will be thrown.
+
+Also `StaticResource` tries to load the assets with the right semantic and tries to parse contents for files that end in `json` or `yaml` (if the yaml lib is installed). Anything else will be parsed as `String`.
+
 ## install
 
 ```sh
