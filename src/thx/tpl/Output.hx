@@ -26,10 +26,12 @@ class UnsafeString extends TString {
     return escape(s);
 }
 
-class Output extends StringBuf {
+@:keep
+class Output {
+  var buf: StringBuf;
   public function new(escapeMethod = null) {
     if(escapeMethod != null) escape = escapeMethod;
-    super();
+    buf = new StringBuf();
   }
 
   public dynamic function escape(str)
@@ -40,6 +42,12 @@ class Output extends StringBuf {
       add(str.toString());
     else
       add(escape(Std.string(str)));
+
+  public inline function add(str: String)
+    buf.add(str);
+
+  public inline function toString()
+    return buf.toString();
 
   public static function safe(str : String)
     return new SafeString(str);
