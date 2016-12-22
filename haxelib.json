@@ -5,8 +5,8 @@
   "classPath": "src",
   "tags": ["thx", "template", "cross"],
   "description": "Template library",
-  "releasenote": "initial release",
-  "version": "0.1.0",
+  "releasenote": "changed to travix and general improvements",
+  "version": "0.2.0",
   "contributors": ["fponticelli"],
   "dependecies" : {
     "thx.core" : "",
