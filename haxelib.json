@@ -6,7 +6,7 @@
   "tags": ["thx", "template", "cross"],
   "description": "Template library",
   "releasenote": "changed to travix and general improvements",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "contributors": ["fponticelli"],
   "dependecies" : {
     "thx.core" : "",
