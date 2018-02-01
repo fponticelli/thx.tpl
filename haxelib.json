@@ -8,7 +8,7 @@
   "releasenote": "changed to travix and general improvements",
   "version": "0.2.1",
   "contributors": ["fponticelli"],
-  "dependecies" : {
+  "dependencies" : {
     "thx.core" : "",
     "hscript" : "2.0.1"
   }
